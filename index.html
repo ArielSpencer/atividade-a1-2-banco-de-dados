@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atividade 2 - Banco de Dados - Por Ariel Spencer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header>
+    <div class="logo">Ariel Spencer - ADS FAM</div>
+    <a class="repository" href="https://github.com/ArielSpencer/atividade-a1-2-banco-de-dados"
+      target="_blank">Repositório</a>
+  </header>
+
+  <div class="container">
+    <h1>Atividades (A1/2) - Banco de Dados:</h1>
+
+    <div class="question">
+      <h3>1) Explique o que é uma chave primária:</h3>
+      <p>A chave primária é um identificador único/atributo único que identifica de forma exclusiva os registros de uma
+        tabela, normalmente representado por IDs, códigos ou identificadores únicos e universais, como um CRM para
+        identificar médicos.</p>
+      <p>A chave pode ser simples, contendo apenas um campo, ou composta, combinando dois ou mais campos.</p>
+      <p>Cada tabela possui uma chave primária (Primary Key), que é criada junto com a tabela e não é recomendado que
+        seja alterada posteriormente.</p>
+      <p>Nenhum valor nas colunas de chave primária pode estar em branco "NULL".</p>
+      <p><strong>Referência:</strong> <a
+          href="https://docs.oracle.com/en/database/other-databases/nosql-database/18.1/java-driver-table/primary-keys.html"
+          target="_blank">Oracle</a></p>
+    </div>
+
+    <div class="question">
+      <h3>2) Indique a chave primária das tabelas:</h3>
+      <p>A forma de identificar chaves primárias em tabelas se dá pelas iniciais PK.</p>
+      <p>No caso da tabela CLIENTES que vamos trabalhar na sequência, o que indica a chave primária é:</p>
+      <code>numapto NUMBER(3) primary key</code>.
+      <p>Significa que coluna numapto serve para identificar de forma única cada cliente.</p>
+      <p>A tabela VAGAS não possui chave primária definida.</p>
+      <p>Uma chave que poderia ser considerada é <code>numvaga NUMBER(3) PRIMARY KEY</code>, para identificar de forma
+        única as vagas.</p>
+      <p>Outra forma seria atribuindo uma coluna da vaga, como <code>COD_VAGA</code>, que após ser declarado, podemos
+        utilizar <code>PRIMARY KEY(COD_VAGA)</code> para referenciar como chave primária.
+      </p>
+    </div>
+
+    <div class="question">
+      <h3>3) Explique o que é uma chave estrangeira:</h3>
+      <p>A chave estrangeira é um atributo que permite o cruzamento entre tabelas, garantindo a integridade referencial
+        no banco de dados.</p>
+      <p>Ela refere-se a um campo em uma tabela que corresponde à chave primária (PK) de outra tabela,
+        criando uma relação entre os registros.</p>
+      <p>A chave estrangeira pode ser usada para garantir que os dados inseridos em uma tabela tenham correspondência
+        válida na tabela relacionada.</p>
+      <p>Um exemplo: em um sistema de cadastro de médicos e pacientes, a chave estrangeira pode ser usada para
+        relacionar consultas a médicos.</p>
+      <p>Diferente da chave primária, a chave estrangeira pode aceitar valores “NULL”.</p>
+    </div>
+
+    <div class="question">
+      <h3>4) Indique a chave estrangeira das tabelas:</h3>
+      <p>A forma de identificar chaves primárias em tabelas se dá pelas iniciais FK.</p>
+      <p>Definindo um campo ou conjunto de campos que se referem à chave primária de outra tabela.</p>
+      <p>No caso da tabela que vamos trabalhar na sequência, o que indica a chave estrangeira da tabela vagas é:</p>
+      <code>constraint fk_numapto foreign key (numapto) references clientes(numapto)</code>,
+      <p>se referindo a conexão entre o número do apartamento que é referenciado.</p>
+    </div>
+
+    <h2>Declaração das Tabelas</h2>
+
+    <h3>Configuração da Sessão</h3>
+    <pre><code>ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MM/YYYY';</code></pre>
+
+    <h3>Criação da Tabela Clientes</h3>
+    <pre><code>CREATE TABLE CLIENTES (
+    codcli int generated always AS identity (START WITH 1000 increment BY 1),
+    andar int,
+    nome VARCHAR(60),
+    fone VARCHAR(20),
+    dtaniv DATE,
+    qtdemoradores numeric(2),
+    numapto NUMBER(3) primary key,
+    tipopropriedade CHAR(1) CHECK (tipopropriedade IN ('P','A')),
+    multa FLOAT
+);</code></pre>
+
+    <h3>Criação da Tabela Vagas</h3>
+    <pre><code>CREATE TABLE VAGAS (
+    numvaga NUMBER(3),
+    numapto NUMBER(3),
+    constraint fk_numapto foreign key (numapto) references clientes(numapto),
+    observacao CHAR(4)
+);</code></pre>
+
+    <h3>Inserção dos Dados das Tabelas</h3>
+
+    <h4>Inserção de Clientes</h4>
+    <pre><code>
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (1, 'Jose Silva', '9-9123-1111','09/01/1999',5,10,'P', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (1, 'Ana Lima', '9-9123-1112','09/06/2000',1,11,'P', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (2, 'Carla Terra', '9-9123-1113','18/05/2001',3,20,'A', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (2, 'Amauri Campos', '9-9123-1114','17/12/1994',6,21,'P', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (3, 'Fabio Mendes', '9-9123-1115','03/03/2000',5,31,'A', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (3, 'Fabiana Santos', '9-9123-1116','02/07/2000',4,32,'A', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (4, 'Guilia Gam', '9-9123-1117','04/03/2003',2,41,'P', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (4, 'Pedro Gam', '9-9123-1118','03/09/2003',1,42,'P', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (5, 'Guilia Gam', '9-9123-1119','05/08/2004',4,51,'P', 300);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (5, 'Pedro Gam', '9-9123-1120','01/10/2005',5,52,'A', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (6, 'Teresa Ruiz', '9-9123-1121','13/08/2002',3,61,'P', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (6, 'Silvia Lemos', '9-9123-1122','15/11/2001',3,62,'A', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (7, 'Leila Santana', '9-9123-1123','25/10/2002',2,71,'A', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (7, 'Selma Lopes', '9-9123-1124','18/09/2008',1,72,'A', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (8, 'Gildo Gomes', '9-9123-1125','19/05/2003',4,81,'P', 500);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (8, 'Sandra SÃ¡', '9-9123-1126','12/12/2000',5,82,'A', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (9, 'Wilson Pereira', '9-9123-1127','09/10/2000',6,91,'P', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (9, 'Gerson Santos', '9-9123-1128','16/07/2004',4,92,'A', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (10, 'Wilson Pereira', '9-9123-1129','20/06/2002',2,101,'P', NULL);
+    INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+    VALUES (10, 'Gerson Santos', '9-9123-1130','18/09/2008',3,102,'P', NULL);</code></pre>
+
+    <h2>Tabela CLIENTES</h2>
+    <pre><code>SELECT * FROM CLIENTES;</code></pre>
+    <table>
+      <thead>
+        <tr>
+          <th>codcli</th>
+          <th>andar</th>
+          <th>nome</th>
+          <th>fone</th>
+          <th>dtaniv</th>
+          <th>qtdemoradores</th>
+          <th>numapto</th>
+          <th>tipopropriedade</th>
+          <th>multa</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1000</td>
+          <td>1</td>
+          <td>Jose Silva</td>
+          <td>9-9123-1111</td>
+          <td>09/01/1999</td>
+          <td>5</td>
+          <td>10</td>
+          <td>P</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1001</td>
+          <td>1</td>
+          <td>Ana Lima</td>
+          <td>9-9123-1112</td>
+          <td>09/06/2000</td>
+          <td>1</td>
+          <td>11</td>
+          <td>P</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1002</td>
+          <td>2</td>
+          <td>Carla Terra</td>
+          <td>9-9123-1113</td>
+          <td>18/05/2001</td>
+          <td>3</td>
+          <td>20</td>
+          <td>A</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1003</td>
+          <td>2</td>
+          <td>Amauri Campos</td>
+          <td>9-9123-1114</td>
+          <td>17/12/1994</td>
+          <td>6</td>
+          <td>21</td>
+          <td>P</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1004</td>
+          <td>3</td>
+          <td>Fabio Mendes</td>
+          <td>9-9123-1115</td>
+          <td>03/03/2000</td>
+          <td>5</td>
+          <td>31</td>
+          <td>A</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1005</td>
+          <td>3</td>
+          <td>Fabiana Santos</td>
+          <td>9-9123-1116</td>
+          <td>02/07/2000</td>
+          <td>4</td>
+          <td>32</td>
+          <td>A</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1006</td>
+          <td>4</td>
+          <td>Guilia Gam</td>
+          <td>9-9123-1117</td>
+          <td>04/03/2003</td>
+          <td>2</td>
+          <td>41</td>
+          <td>P</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1007</td>
+          <td>4</td>
+          <td>Pedro Gam</td>
+          <td>9-9123-1118</td>
+          <td>03/09/2003</td>
+          <td>1</td>
+          <td>42</td>
+          <td>P</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1008</td>
+          <td>5</td>
+          <td>Guilia Gam</td>
+          <td>9-9123-1119</td>
+          <td>05/08/2004</td>
+          <td>4</td>
+          <td>51</td>
+          <td>P</td>
+          <td>300</td>
+        </tr>
+        <tr>
+          <td>1009</td>
+          <td>5</td>
+          <td>Pedro Gam</td>
+          <td>9-9123-1120</td>
+          <td>01/10/2005</td>
+          <td>5</td>
+          <td>52</td>
+          <td>A</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1010</td>
+          <td>6</td>
+          <td>Teresa Ruiz</td>
+          <td>9-9123-1121</td>
+          <td>13/08/2002</td>
+          <td>3</td>
+          <td>61</td>
+          <td>P</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1011</td>
+          <td>6</td>
+          <td>Silvia Lemos</td>
+          <td>9-9123-1122</td>
+          <td>15/11/2001</td>
+          <td>3</td>
+          <td>62</td>
+          <td>A</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1012</td>
+          <td>7</td>
+          <td>Leila Santana</td>
+          <td>9-9123-1123</td>
+          <td>25/10/2002</td>
+          <td>2</td>
+          <td>71</td>
+          <td>A</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1013</td>
+          <td>7</td>
+          <td>Selma Lopes</td>
+          <td>9-9123-1124</td>
+          <td>18/09/2008</td>
+          <td>1</td>
+          <td>72</td>
+          <td>A</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1014</td>
+          <td>8</td>
+          <td>Gildo Gomes</td>
+          <td>9-9123-1125</td>
+          <td>19/05/2003</td>
+          <td>4</td>
+          <td>81</td>
+          <td>P</td>
+          <td>500</td>
+        </tr>
+        <tr>
+          <td>1015</td>
+          <td>8</td>
+          <td>Sandra Sá</td>
+          <td>9-9123-1126</td>
+          <td>12/12/2000</td>
+          <td>5</td>
+          <td>82</td>
+          <td>A</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1016</td>
+          <td>9</td>
+          <td>Wilson Pereira</td>
+          <td>9-9123-1127</td>
+          <td>09/10/2000</td>
+          <td>6</td>
+          <td>91</td>
+          <td>P</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1017</td>
+          <td>9</td>
+          <td>Gerson Santos</td>
+          <td>9-9123-1128</td>
+          <td>16/07/2004</td>
+          <td>4</td>
+          <td>92</td>
+          <td>A</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1018</td>
+          <td>10</td>
+          <td>Wilson Pereira</td>
+          <td>9-9123-1129</td>
+          <td>20/06/2002</td>
+          <td>2</td>
+          <td>101</td>
+          <td>P</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1019</td>
+          <td>10</td>
+          <td>Gerson Santos</td>
+          <td>9-9123-1130</td>
+          <td>18/09/2008</td>
+          <td>3</td>
+          <td>102</td>
+          <td>P</td>
+          <td>NULL</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>Inserção de Vagas</h4>
+    <pre><code>
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (10,5,NULL);
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (11,1,NULL);
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (20,4,NULL);
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (21,9,'VAGO');
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (10,2,'VAGO');
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (32,13,NULL);
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (41,7,NULL);
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (42,6,NULL);
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (51,8,NULL);
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (52,17,NULL);
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (61,3,NULL);
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (62,10,'VAGO');
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (71,12,NULL);
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (71,14,NULL);
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (81,16,NULL);
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (82,18,NULL);
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (91,20,NULL);
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (92,19,'VAGO');
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (101,15,NULL);
+    INSERT INTO VAGAS (numapto, numvaga,observacao)
+    VALUES (102,11,NULL);</code></pre>
+
+    <h2>Tabela VAGAS</h2>
+    <pre><code>SELECT * FROM VAGAS;</code></pre>
+    <table>
+      <thead>
+        <tr>
+          <th>numvaga</th>
+          <th>numapto</th>
+          <th>observacao</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>5</td>
+          <td>10</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>11</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>20</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>21</td>
+          <td>VAGO</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>10</td>
+          <td>VAGO</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>32</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>41</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>42</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>51</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>52</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td>61</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td>62</td>
+          <td>VAGO</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>71</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td>71</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td>81</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td>91</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>19</td>
+          <td>92</td>
+          <td>VAGO</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td>101</td>
+          <td>NULL</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>102</td>
+          <td>NULL</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="question">
+      <h3>5) Mostre o comando que pegue os aniversariantes do mês de setembro:</h3>
+      <pre><code>SELECT * FROM CLIENTES WHERE extract(month from DTANIV) = '09' ORDER BY NOME ASC;</code></pre>
+      <div class="result-table">
+        <h4>Resultado:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>CODCLI</th>
+              <th>Andar</th>
+              <th>Nome</th>
+              <th>Fone</th>
+              <th>Data de Aniversário</th>
+              <th>Quantidade de Moradores</th>
+              <th>Número do Apartamento</th>
+              <th>Tipo de Propriedade</th>
+              <th>Multa</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1019</td>
+              <td>10</td>
+              <td>Gerson Santos</td>
+              <td>9-9123-1130</td>
+              <td>18/09/2008</td>
+              <td>3</td>
+              <td>102</td>
+              <td>P</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>1007</td>
+              <td>4</td>
+              <td>Pedro Gam</td>
+              <td>9-9123-1118</td>
+              <td>03/09/2003</td>
+              <td>1</td>
+              <td>42</td>
+              <td>P</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>1013</td>
+              <td>7</td>
+              <td>Selma Lopes</td>
+              <td>9-9123-1124</td>
+              <td>18/09/2008</td>
+              <td>1</td>
+              <td>72</td>
+              <td>A</td>
+              <td>-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>6) Refaça a questão 5 usando no where to char(dtnasc,mm) =’05’:</h3>
+      <pre><code>SELECT * FROM CLIENTES WHERE TO_CHAR(DTANIV, 'MM') = '05' ORDER BY DTANIV ASC;</code></pre>
+      <div class="result-table">
+        <h4>Resultado:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>CODCLI</th>
+              <th>Andar</th>
+              <th>Nome</th>
+              <th>Fone</th>
+              <th>Data de Aniversário</th>
+              <th>Quantidade de Moradores</th>
+              <th>Número do Apartamento</th>
+              <th>Tipo de Propriedade</th>
+              <th>Multa</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1002</td>
+              <td>2</td>
+              <td>Carla Terra</td>
+              <td>9-9123-1113</td>
+              <td>18/05/2001</td>
+              <td>3</td>
+              <td>20</td>
+              <td>A</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>1014</td>
+              <td>8</td>
+              <td>Gildo Gomes</td>
+              <td>9-9123-1125</td>
+              <td>19/05/2003</td>
+              <td>4</td>
+              <td>81</td>
+              <td>P</td>
+              <td>500</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>7) Mostre o comando que pegue QUE NASCEU NO ANO 2000 (APOSTILA PICO PAG 83):</h3>
+      <pre><code>SELECT NOME, TO_CHAR(DTANIV, 'DD/MM/YYYY') FROM CLIENTES WHERE TO_CHAR(DTANIV, 'yyyy') = '2000';</code></pre>
+      <div class="result-table">
+        <h4>Resultado:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>TO_CHAR(DTANIV,'DD/MM/YYYY')</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ana Lima</td>
+              <td>09/06/2000</td>
+            </tr>
+            <tr>
+              <td>Fabio Mendes</td>
+              <td>03/03/2000</td>
+            </tr>
+            <tr>
+              <td>Fabiana Santos</td>
+              <td>02/07/2000</td>
+            </tr>
+            <tr>
+              <td>Sandra Sá</td>
+              <td>12/12/2000</td>
+            </tr>
+            <tr>
+              <td>Wilson Pereira</td>
+              <td>09/10/2000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>8) Mostre a idade dos donos do apartamentos (vice apostila PICO pag 88):</h3>
+      <pre><code>SELECT NOME, TO_CHAR(DTANIV, 'dd/mm/yyyy') "Nascimento", ROUND((SYSDATE - DTANIV) / 365.25) "Idade", TIPOPROPRIEDADE FROM CLIENTES WHERE TIPOPROPRIEDADE = 'P' ORDER BY DTANIV DESC;</code></pre>
+      <h4>-- OU --</h4>
+      <pre><code>SELECT NOME, ROUND((SYSDATE - DTANIV) / 365.25) AS "Idade" FROM CLIENTES WHERE TIPOPROPRIEDADE = 'P';</code></pre>
+      <p>OBS: O .25 do 365.25 é para compensar os anos bissextos.</p>
+      <div class="result-table">
+        <h4>Resultado:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Nascimento</th>
+              <th>Idade</th>
+              <th>Tipo de Propriedade</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Gerson Santos</td>
+              <td>18/09/2008</td>
+              <td>16</td>
+              <td>P</td>
+            </tr>
+            <tr>
+              <td>Guilia Gam</td>
+              <td>05/08/2004</td>
+              <td>20</td>
+              <td>P</td>
+            </tr>
+            <tr>
+              <td>Pedro Gam</td>
+              <td>03/09/2003</td>
+              <td>21</td>
+              <td>P</td>
+            </tr>
+            <tr>
+              <td>Gildo Gomes</td>
+              <td>19/05/2003</td>
+              <td>21</td>
+              <td>P</td>
+            </tr>
+            <tr>
+              <td>Guilia Gam</td>
+              <td>04/03/2003</td>
+              <td>22</td>
+              <td>P</td>
+            </tr>
+            <tr>
+              <td>Teresa Ruiz</td>
+              <td>13/08/2002</td>
+              <td>22</td>
+              <td>P</td>
+            </tr>
+            <tr>
+              <td>Wilson Pereira</td>
+              <td>20/06/2002</td>
+              <td>22</td>
+              <td>P</td>
+            </tr>
+            <tr>
+              <td>Wilson Pereira</td>
+              <td>09/10/2000</td>
+              <td>24</td>
+              <td>P</td>
+            </tr>
+            <tr>
+              <td>Ana Lima</td>
+              <td>09/06/2000</td>
+              <td>24</td>
+              <td>P</td>
+            </tr>
+            <tr>
+              <td>Jose Silva</td>
+              <td>09/01/1999</td>
+              <td>26</td>
+              <td>P</td>
+            </tr>
+            <tr>
+              <td>Amauri Campos</td>
+              <td>17/12/1994</td>
+              <td>30</td>
+              <td>P</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>9) Mostre a quantidade de moradores por apartamento quando for superior a 4 moradores e que habitem os andares
+        acima do 8º:</h3>
+      <pre><code>SELECT NUMAPTO, QTDEMORADORES FROM CLIENTES WHERE QTDEMORADORES > 4 AND ANDAR > 8;</code></pre>
+      <div class="result-table">
+        <h4>Resultado:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Número do Apartamento</th>
+              <th>Quantidade de Moradores</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>91</td>
+              <td>6</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>10) Qual é o morador que faz aniversário no dia 18/09?</h3>
+      <pre><code>SELECT NOME, DTANIV, NUMAPTO FROM CLIENTES WHERE TO_CHAR(DTANIV, 'DD/MM') = '18/09';</code></pre>
+      <div class="result-table">
+        <h4>Resultado:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Data de Aniversário</th>
+              <th>Número do Apartamento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Selma Lopes</td>
+              <td>18/09/2008</td>
+              <td>72</td>
+            </tr>
+            <tr>
+              <td>Gerson Santos</td>
+              <td>18/09/2008</td>
+              <td>102</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>11) Suponha que na tabela Vagas o campo Observação só vai ser preenchido com “Vago” quando houver essa
+        situação,
+        -- caso contrário o campo no insert não vai ser preenchido ficando com nulo, como é essa instrução insert?</h3>
+      <pre><code>INSERT INTO VAGAS (NUMAPTO, NUMVAGA) VALUES (20, 4);</code></pre>
+      <h4>-- OU --</h4>
+      <pre><code>INSERT INTO VAGAS (NUMAPTO, NUMVAGA, OBSERVACAO) VALUES (20, 4, NULL);</code></pre>
+    </div>
+
+    <div class="question">
+      <h3>12) Suponha que na tabela Vagas o campo Observação só vai ser preenchido com “Vago” quando houver essa
+        situação,
+        -- caso contrário o campo no insert não vai ser preenchido ficando com nulo, o select que traga todos os dados
+        da tabela Vagas
+        -- onde o campo OBS está preenchido com nulo? (vide apostila pico pag 73):</h3>
+      <pre><code>SELECT NUMAPTO, NUMVAGA, OBSERVACAO FROM VAGAS WHERE OBSERVACAO IS NULL;</code></pre>
+      <div class="result-table">
+        <h4>Resultado:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Número do Apartamento</th>
+              <th>Número da Vaga</th>
+              <th>Observação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>10</td>
+              <td>5</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>11</td>
+              <td>1</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>20</td>
+              <td>4</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>32</td>
+              <td>13</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>41</td>
+              <td>7</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>42</td>
+              <td>6</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>51</td>
+              <td>8</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>52</td>
+              <td>17</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>61</td>
+              <td>3</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>71</td>
+              <td>12</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>71</td>
+              <td>14</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>81</td>
+              <td>16</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>82</td>
+              <td>18</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>91</td>
+              <td>20</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>101</td>
+              <td>15</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>102</td>
+              <td>11</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>20</td>
+              <td>4</td>
+              <td>-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>13) Desejo criar o campo tipo de vaga em vagas para informar se a vaga é dupla ou simples.
+        -- Mostre como adicionar um novo campo em vagas chamado tipovaga varchar(7):</h3>
+      <pre><code>ALTER TABLE VAGAS ADD TIPOVAGA VARCHAR(7);</code></pre>
+      <pre><code>DESC VAGAS;</code></pre>
+      <div class="result-table">
+        <h4>Resultado:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Coluna</th>
+              <th>Null?</th>
+              <th>Tipo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>NUMVAGA</td>
+              <td>-</td>
+              <td>NUMBER(3,0)</td>
+            </tr>
+            <tr>
+              <td>NUMAPTO</td>
+              <td>-</td>
+              <td>NUMBER(3,0)</td>
+            </tr>
+            <tr>
+              <td>OBSERVACAO</td>
+              <td>-</td>
+              <td>CHAR(4)</td>
+            </tr>
+            <tr>
+              <td>TIPOVAGA</td>
+              <td>-</td>
+              <td>VARCHAR2(7)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>14) Complementado a questão 13, mostre como preencher o campo tipovagas com simples para todas as vagas:</h3>
+      <pre><code>UPDATE VAGAS SET TIPOVAGA = 'SIMPLES';</code></pre>
+      <pre><code>SELECT * FROM VAGAS;</code></pre>
+      <div class="result-table">
+        <h4>Resultado:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Número da Vaga</th>
+              <th>Número do Apartamento</th>
+              <th>Observação</th>
+              <th>Tipo de Vaga</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>5</td>
+              <td>10</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>11</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>20</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>9</td>
+              <td>21</td>
+              <td>VAGO</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>10</td>
+              <td>VAGO</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>13</td>
+              <td>32</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td>41</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>42</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td>51</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>17</td>
+              <td>52</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>61</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>10</td>
+              <td>62</td>
+              <td>VAGO</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>12</td>
+              <td>71</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>14</td>
+              <td>71</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>16</td>
+              <td>81</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>18</td>
+              <td>82</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>20</td>
+              <td>91</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>19</td>
+              <td>92</td>
+              <td>VAGO</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>15</td>
+              <td>101</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>11</td>
+              <td>102</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>20</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>15) Complementado a questão 13, altere as vagas número 13, 17 e 10 para dupla, usando um único update e não
+        três updates:</h3>
+      <pre><code>UPDATE VAGAS SET TIPOVAGA = 'DUPLA' WHERE NUMVAGA IN (13, 17, 10);</code></pre>
+    </div>
+
+    <div class="question">
+      <h3>16) Complementado a questão 13, altere as vagas número 13, 17 e 10 para dupla, usando um único update e não
+        três updates:</h3>
+      <pre><code>UPDATE VAGAS SET TIPOVAGA = 'DUPLA' WHERE NUMVAGA IN (13, 17, 10); -- Essa questão está duplicada, mas repeti a resposta.</code></pre>
+    </div>
+
+    <div class="question">
+      <h3>17) Mostre nome Morador (no select altere o título deste campo), apto e quantidade de moradores para o
+        intervalo entre 3 e 7 moradores:</h3>
+      <pre><code>SELECT NOME AS "MORADOR", NUMAPTO, QTDEMORADORES FROM CLIENTES WHERE QTDEMORADORES BETWEEN 3 AND 7;</code></pre>
+      <h4>-- OU --</h4>
+      <pre><code>SELECT NOME AS "MORADOR", NUMAPTO, QTDEMORADORES FROM CLIENTES WHERE QTDEMORADORES >= 3 AND QTDEMORADORES <= 7;</code></pre>
+      <div class="result-table">
+        <h4>Resultado:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Morador</th>
+              <th>Número do Apartamento</th>
+              <th>Quantidade de Moradores</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Jose Silva</td>
+              <td>10</td>
+              <td>5</td>
+            </tr>
+            <tr>
+              <td>Carla Terra</td>
+              <td>20</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>Amauri Campos</td>
+              <td>21</td>
+              <td>6</td>
+            </tr>
+            <tr>
+              <td>Fabio Mendes</td>
+              <td>31</td>
+              <td>5</td>
+            </tr>
+            <tr>
+              <td>Fabiana Santos</td>
+              <td>32</td>
+              <td>4</td>
+            </tr>
+            <tr>
+              <td>Guilia Gam</td>
+              <td>51</td>
+              <td>4</td>
+            </tr>
+            <tr>
+              <td>Pedro Gam</td>
+              <td>52</td>
+              <td>5</td>
+            </tr>
+            <tr>
+              <td>Teresa Ruiz</td>
+              <td>61</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>Silvia Lemos</td>
+              <td>62</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>Gildo Gomes</td>
+              <td>81</td>
+              <td>4</td>
+            </tr>
+            <tr>
+              <td>Sandra Sá</td>
+              <td>82</td>
+              <td>5</td>
+            </tr>
+            <tr>
+              <td>Wilson Pereira</td>
+              <td>91</td>
+              <td>6</td>
+            </tr>
+            <tr>
+              <td>Gerson Santos</td>
+              <td>92</td>
+              <td>4</td>
+            </tr>
+            <tr>
+              <td>Gerson Santos</td>
+              <td>102</td>
+              <td>3</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>18) Alguns moradores dos apartamentos terão que pagar uma multa por atraso nos pagamentos dos condomínios,
+        -- porém esse valor tem que ser atualizado para um aumento de 5% com um desconto de R$50. Atualize esses valores
+        e mostre o comando
+        -- select nome, apto, multa. Altere os títulos das colunas no select usando AS. Formate o campo de multa a ser
+        exibida mostrando a mesma em R$.
+        -- Não esqueça de fazer as alterações no alter section:</h3>
+      <pre><code>ALTER SESSION SET NLS_CURRENCY = 'R$';</code></pre>
+      <pre><code>UPDATE CLIENTES SET multa = (multa + multa * 0.05) - 50 WHERE multa IS NOT NULL;</code></pre>
+      <pre><code>SELECT nome AS "Morador", numapto AS "Apto", TO_CHAR(multa, 'L999G999D00') AS "Multa (R$)" FROM CLIENTES;</code></pre>
+      <h4>-- OU --</h4>
+      <pre><code>UPDATE CLIENTES SET multa = (multa * 1.05) - 50 WHERE multa IS NOT NULL;</code></pre>
+      <p>NOTAS:</p>
+      <ul>
+        <li>L representa o Local Currency Symbol, no caso 'R$'</li>
+        <li>Outra sugestão seria inserir ao início de forma chumbada no código o 'R$' dessa forma:
+          <code>SELECT nome AS "Morador", numapto AS "Apto", 'R$' || TO_CHAR(multa, '999G999D00') AS "Multa (R$)" FROM CLIENTES WHERE multa IS NOT NULL;</code>
+        </li>
+        <li>Caso quiséssemos remover os espaços em branco poderíamos utilizar o FM (Fill Mode).</li>
+
+        <div class="result-table">
+          <h4>Resultado:</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Morador</th>
+                <th>Apto</th>
+                <th>Multa (R$)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Jose Silva</td>
+                <td>10</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Ana Lima</td>
+                <td>11</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Carla Terra</td>
+                <td>20</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Amauri Campos</td>
+                <td>21</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Fabio Mendes</td>
+                <td>31</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Fabiana Santos</td>
+                <td>32</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Guilia Gam</td>
+                <td>41</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Pedro Gam</td>
+                <td>42</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Guilia Gam</td>
+                <td>51</td>
+                <td>R$265.00</td>
+              </tr>
+              <tr>
+                <td>Pedro Gam</td>
+                <td>52</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Teresa Ruiz</td>
+                <td>61</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Silvia Lemos</td>
+                <td>62</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Leila Santana</td>
+                <td>71</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Selma Lopes</td>
+                <td>72</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Gildo Gomes</td>
+                <td>81</td>
+                <td>R$475.00</td>
+              </tr>
+              <tr>
+                <td>Sandra Sá</td>
+                <td>82</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Wilson Pereira</td>
+                <td>91</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Gerson Santos</td>
+                <td>92</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Wilson Pereira</td>
+                <td>101</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Gerson Santos</td>
+                <td>102</td>
+                <td>-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ul>
+    </div>
+
+    <div class="question">
+      <h3>19) Mostre a quantidade de moradores do edifício (pesquise na Apostila Pico páginas 124, 125...):</h3>
+      <pre><code>SELECT SUM(QTDEMORADORES) AS "Quantidade Total de Moradores" FROM CLIENTES;</code></pre>
+      <div class="result-table">
+        <h4>Resultado:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Quantidade Total de Moradores</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>69</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>20) Conte quantos moradores são proprietários de apartamentos e quantos são alugados (pesquisar na apostila
+        Pico pag 145, 146) group by:</h3>
+      <pre><code>SELECT TIPOPROPRIEDADE, COUNT(*) AS "Quantidade" FROM CLIENTES GROUP BY TIPOPROPRIEDADE;</code></pre>
+      <div class="result-table">
+        <h4>Resultado:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Tipo de Propriedade</th>
+              <th>Quantidade</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>P</td>
+              <td>11</td>
+            </tr>
+            <tr>
+              <td>A</td>
+              <td>9</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>21) Liste, quantidade moradores, número apto, num vaga. (pesquisar na apostila Pico pag 100 até 105):</h3>
+      <pre><code>SELECT c.qtdemoradores AS "Quantidade de Moradores", c.numapto AS "Número do Apto", v.numvaga AS "Número da Vaga" FROM CLIENTES c JOIN VAGAS v ON c.numapto = v.numapto;</code></pre>
+      <div class="result-table">
+        <h4>Resultado:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Quantidade de Moradores</th>
+              <th>Número do Apto</th>
+              <th>Número da Vaga</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>5</td>
+              <td>10</td>
+              <td>5</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>11</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>20</td>
+              <td>4</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>21</td>
+              <td>9</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>10</td>
+              <td>2</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>32</td>
+              <td>13</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>41</td>
+              <td>7</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>42</td>
+              <td>6</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>51</td>
+              <td>8</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>52</td>
+              <td>17</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>61</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>62</td>
+              <td>10</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>71</td>
+              <td>12</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>71</td>
+              <td>14</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>81</td>
+              <td>16</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>82</td>
+              <td>18</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>91</td>
+              <td>20</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>92</td>
+              <td>19</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>101</td>
+              <td>15</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>102</td>
+              <td>11</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>20</td>
+              <td>4</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>22) Liste, quantidade moradores, número apto, num vaga, Obs para as vagas OBS Vago
+        (pesquisar na apostila Pico pag 100 até 105):</h3>
+      <pre><code>SELECT c.qtdemoradores AS "Quantidade de Moradores", c.numapto AS "Número do Apto", v.numvaga AS "Número da Vaga", v.observacao AS "Observação" FROM CLIENTES c JOIN VAGAS v ON c.numapto = v.numapto WHERE v.observacao = 'VAGO';</code></pre>
+      <div class="result-table">
+        <h4>Resultado:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Quantidade de Moradores</th>
+              <th>Número do Apto</th>
+              <th>Número da Vaga</th>
+              <th>Observação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>5</td>
+              <td>10</td>
+              <td>2</td>
+              <td>VAGO</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>21</td>
+              <td>9</td>
+              <td>VAGO</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>62</td>
+              <td>10</td>
+              <td>VAGO</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>92</td>
+              <td>19</td>
+              <td>VAGO</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>23) Liste, quantidade moradores, número apto, num vaga Obs para as vagas OBS Vago e vagas Tipo Simples
+        (pesquisar na apostila Pico pag 100 até 105):</h3>
+      <pre><code>SELECT c.qtdemoradores AS "Quantidade de Moradores", c.numapto AS "Número do Apto", v.numvaga AS "Número da Vaga", v.observacao AS "Observação", v.tipovaga AS "Tipo de Vaga" FROM CLIENTES c JOIN VAGAS v ON c.numapto = v.numapto WHERE v.observacao = 'VAGO' AND v.tipovaga = 'SIMPLES';</code></pre>
+      <div class="result-table">
+        <h4>Resultado:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Quantidade de Moradores</th>
+              <th>Número do Apto</th>
+              <th>Número da Vaga</th>
+              <th>Observação</th>
+              <th>Tipo de Vaga</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>5</td>
+              <td>10</td>
+              <td>2</td>
+              <td>VAGO</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>21</td>
+              <td>9</td>
+              <td>VAGO</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>62</td>
+              <td>10</td>
+              <td>VAGO</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>92</td>
+              <td>19</td>
+              <td>VAGO</td>
+              <td>SIMPLES</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>24) Liste, quantidade moradores, número apto, num vaga Obs para as vagas OBS Ocupada (as que estão com null) e
+        vagas Tipo Simples
+        (pesquisar na apostila Pico pag 100 até 105):</h3>
+      <pre><code>SELECT c.qtdemoradores AS "Quantidade de Moradores", c.numapto AS "Número do Apto", v.numvaga AS "Número da Vaga", v.observacao AS "Observação", v.tipovaga AS "Tipo de Vaga" FROM CLIENTES c JOIN VAGAS v ON c.numapto = v.numapto WHERE v.observacao IS NULL AND v.tipovaga = 'SIMPLES';</code></pre>
+      <div class="result-table">
+        <h4>Resultado:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Quantidade de Moradores</th>
+              <th>Número do Apto</th>
+              <th>Número da Vaga</th>
+              <th>Observação</th>
+              <th>Tipo de Vaga</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>5</td>
+              <td>10</td>
+              <td>5</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>11</td>
+              <td>1</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>20</td>
+              <td>4</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>20</td>
+              <td>4</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>41</td>
+              <td>7</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>42</td>
+              <td>6</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>51</td>
+              <td>8</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>61</td>
+              <td>3</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>71</td>
+              <td>12</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>71</td>
+              <td>14</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>81</td>
+              <td>16</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>82</td>
+              <td>18</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>101</td>
+              <td>15</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>102</td>
+              <td>11</td>
+              <td>-</td>
+              <td>SIMPLES</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>Desenvolvido por <a href="http://www.arielspencer.com.br" target="_blank">Ariel Spencer</a> &copy; Todos os
+      direitos reservados.</p>
+  </footer>
+</body>
+
+</html>
