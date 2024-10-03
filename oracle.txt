@@ -1,0 +1,273 @@
+-- ATIVIDADE 2 - BANCO DE DADOS - POR ARIEL SPENCER --
+
+-- 1) EXPLIQUE O QUE É UMA CHAVE PRIMÁRIA:
+
+-- A chave primária é um identificador único/atributo único que identifica de forma exclusiva os registros de uma tabela,
+-- normalmente representado por IDs, códigos ou identificadores únicos e universais, como um CRM para identificar médicos.
+-- A chave pode ser simples, contendo apenas um campo, ou composta, combinando dois ou mais campos.
+-- Cada tabela possui uma chave primária (Primary Key), que é criada junto com a tabela e não é recomendado que seja alterada posteriormente.
+-- Nenhum valor nas colunas de chave primária pode estar em braco "NULL".
+
+-- Referência: https://docs.oracle.com/en/database/other-databases/nosql-database/18.1/java-driver-table/primary-keys.html
+
+
+-- 2) INDIQUE A CHAVE PRIMÁRIA DAS TABELAS:
+
+-- A forma de identificar chaves primárias em tabelas se dá pelas iniciais PK.
+
+-- No caso da tabela CLIENTES que vamos trabalhar na sequência, o que indica a chave primária é: "numapto NUMBER(3) primary key"
+-- Significa que coluna numapto serve para identificar de forma única cada cliente.
+-- A tabela VAGAS não possui chave primária definida. Uma chave que poderia ser considerada é ‘numvaga NUMBER(3) PRIMARY KEY’,
+-- para identificar de forma única as vagas.
+-- Outra forma seria atribuindo uma coluna da vaga, como "COD_VAGA" que após ser declarado, podemos utilizar "PRIMARY KEY(COD_VAGA)" para referenciar como chave primária.
+
+
+-- 3) EXPLIQUE O QUE É UMA CHAVE ESTRANGEIRA:
+
+-- A chave estrangeira é um atributo que permite o cruzamento entre tabelas, garantindo a integridade referencial no banco de dados.
+-- Ela refere-se a um campo em uma tabela que corresponde à chave primária (PK) de outra tabela, criando uma relação entre os registros.
+-- A chave estrangeira pode ser usada para garantir que os dados inseridos em uma tabela tenham correspondência válida na tabela relacionada.
+    
+-- Um exemplo: em um sistema de cadastro de médicos e pacientes, a chave estrangeira pode ser usada para relacionar consultas a médicos.
+-- Diferente da chave primária, a chave estrangeira pode aceitar valores “NULL”
+
+
+-- 4) INDIQUE A CHAVE ESTRANGEIRA DAS TABELAS:
+
+-- A forma de identificar chaves primárias em tabelas se dá pelas iniciais FK.
+-- Definindo um campo ou conjunto de campos que se referem à chave primária de outra tabela.
+-- No caso da tabela que vamos trabalhar na sequência, o que indica a chave estrangeira da tabela vagas é:
+-- constraint fk_numapto foreign key (numapto) references clientes(numapto),
+-- Se referindo a conexão entre o número do apartamento que é referenciado.
+
+
+-------------- DECLARAÇÃO DAS TABELAS --------------
+
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MM/YYYY';
+ 
+CREATE TABLE CLIENTES (
+    codcli int generated always AS identity (START WITH 1000 increment BY 1),
+    andar int,
+    nome VARCHAR(60),
+    fone VARCHAR(20),
+    dtaniv DATE,
+    qtdemoradores numeric(2),
+    numapto NUMBER(3) primary key,
+    tipopropriedade CHAR(1) CHECK (tipopropriedade IN ('P','A')),
+    multa FLOAT
+);
+ 
+CREATE TABLE VAGAS (
+    numvaga NUMBER(3),
+    numapto NUMBER(3),
+    constraint fk_numapto foreign key (numapto) references clientes(numapto),
+    observacao CHAR(4)
+);
+ 
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (1, 'Jose Silva', '9-9123-1111','09/01/1999',5,10,'P', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (1, 'Ana Lima', '9-9123-1112','09/06/2000',1,11,'P', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (2, 'Carla Terra', '9-9123-1113','18/05/2001',3,20,'A', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (2, 'Amauri Campos', '9-9123-1114','17/12/1994',6,21,'P', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (3, 'Fabio Mendes', '9-9123-1115','03/03/2000',5,31,'A', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (3, 'Fabiana Santos', '9-9123-1116','02/07/2000',4,32,'A', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (4, 'Guilia Gam', '9-9123-1117','04/03/2003',2,41,'P', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (4, 'Pedro Gam', '9-9123-1118','03/09/2003',1,42,'P', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (5, 'Guilia Gam', '9-9123-1119','05/08/2004',4,51,'P', 300);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (5, 'Pedro Gam', '9-9123-1120','01/10/2005',5,52,'A', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (6, 'Teresa Ruiz', '9-9123-1121','13/08/2002',3,61,'P', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (6, 'Silvia Lemos', '9-9123-1122','15/11/2001',3,62,'A', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (7, 'Leila Santana', '9-9123-1123','25/10/2002',2,71,'A', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (7, 'Selma Lopes', '9-9123-1124','18/09/2008',1,72,'A', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (8, 'Gildo Gomes', '9-9123-1125','19/05/2003',4,81,'P', 500);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (8, 'Sandra SÃ¡', '9-9123-1126','12/12/2000',5,82,'A', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (9, 'Wilson Pereira', '9-9123-1127','09/10/2000',6,91,'P', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (9, 'Gerson Santos', '9-9123-1128','16/07/2004',4,92,'A', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (10, 'Wilson Pereira', '9-9123-1129','20/06/2002',2,101,'P', NULL);
+INSERT INTO CLIENTES (andar,nome,fone,dtaniv,qtdemoradores,numapto,tipopropriedade, multa)
+VALUES (10, 'Gerson Santos', '9-9123-1130','18/09/2008',3,102,'P', NULL);
+ 
+SELECT * FROM CLIENTES;
+ 
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (10,5,NULL);
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (11,1,NULL);
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (20,4,NULL);
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (21,9,'VAGO');
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (10,2,'VAGO');
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (32,13,NULL);
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (41,7,NULL);
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (42,6,NULL);
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (51,8,NULL);
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (52,17,NULL);
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (61,3,NULL);
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (62,10,'VAGO');
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (71,12,NULL);
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (71,14,NULL);
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (81,16,NULL);
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (82,18,NULL);
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (91,20,NULL);
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (92,19,'VAGO');
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (101,15,NULL);
+INSERT INTO VAGAS (numapto, numvaga,observacao)
+VALUES (102,11,NULL);
+
+SELECT * FROM VAGAS;
+
+-- 5) Mostre o comando que pegue as os aniversariantes do mês de setembro Pesquise na apostila Pico PAG 83 OS ANIVERSARIANTES DO MÊS 09:
+SELECT * FROM CLIENTES WHERE extract(month from DTANIV) = '09' ORDER BY NOME ASC;
+
+
+-- 6) Refaça a questão 5 usando no where to char(dtnasc,mm) =’05’:
+SELECT * FROM CLIENTES WHERE TO_CHAR(DTANIV, 'MM') = '05' ORDER BY DTANIV ASC;
+
+
+-- 7) Mostre o comando que pegue QUE NASCEU NO ANO 2000 (APOSTILA PICO PAG 83):
+SELECT NOME,TO_CHAR(DTANIV,'DD/MM/YYYY') FROM CLIENTES where to_char(DTANIV,'yyyy')='2000';
+
+
+-- 8) Mostre a idade dos donos do apartamentos (vice apostila PICO pag 88):
+SELECT NOME,TO_CHAR(DTANIV,'dd/mm/yyyy') "Nascimento" , round((sysdate-DTANIV)/365.25) "Idade", TIPOPROPRIEDADE FROM CLIENTES WHERE TIPOPROPRIEDADE='P' order by DTANIV desc;
+
+-- OU --
+SELECT NOME, round((sysdate-DTANIV)/365.25) AS "Idade" FROM CLIENTES WHERE TIPOPROPRIEDADE='P';
+
+-- OBS: O .25 do 365.25 é para compensar os anos bisextos:
+
+
+-- 9) Mostre a quantidade de moradores por apartamento quando for superior a 4 moradores e que habitem os andares acima do 8º:
+SELECT NUMAPTO,QTDEMORADORES FROM CLIENTES WHERE QTDEMORADORES > 4 AND ANDAR > 8;
+
+
+-- 10) Qual é o morador que faz aniversário no dia 18/09?
+SELECT NOME, DTANIV, NUMAPTO FROM CLIENTES WHERE TO_CHAR(DTANIV,'DD/MM') = '18/09';
+
+
+-- 11) Suponha que na tabela Vagas o campo Observação só vai ser preenchido com “Vago” quando houver essa situação, 
+-- caso contrário o campo no insert não vai ser preenchido ficando com nulo, como é essa instrução insert?
+INSERT INTO VAGAS(NUMAPTO, NUMVAGA) VALUES (20,4);
+
+-- OU --
+
+INSERT INTO VAGAS(NUMAPTO, NUMVAGA,OBSERVACAO) VALUES (20,4,NULL);
+
+
+-- 12) Suponha que na tabela Vagas o campo Observação só vai ser preenchido com “Vago” quando houver essa situação,
+-- caso contrário o campo no insert não vai ser preenchido ficando com nulo, o select que traga todos os dados da tabela Vagas
+-- onde o campo OBS esta preenchido com nulo ? (vide apostila pico pag 73):
+SELECT NUMAPTO, NUMVAGA,OBSERVACAO FROM VAGAS WHERE OBSERVACAO IS NULL;
+
+
+-- 13) Desejo criar o campo tipo de vaga em vagas para informar se a vaga é dupla ou simples.
+-- Mostre como adicionar um novo campo em vagas chamado tipovaga varchar (7):
+ALTER TABLE VAGAS ADD TIPOVAGA VARCHAR(7);
+
+DESC VAGAS;
+
+
+-- 14) Complementado a questão 13, mostre como preencher o campo tipovagas com simples para todos as vagas:
+
+UPDATE VAGAS SET TIPOVAGA = 'SIMPLES';
+
+SELECT * FROM VAGAS;
+
+
+-- 15) Complementado a questão 13, altere as vagas numero 13 , 17 e 10 para dupla, usando um único update e não três updates:
+UPDATE VAGAS SET TIPOVAGA='DUPLA' WHERE NUMVAGA IN(13,17,20);
+
+
+-- 16) Complementado a questão 13, altere as vagas número 13 , 17 e 10 para dupla, usando um único update e não três updates:
+UPDATE VAGAS SET TIPOVAGA='DUPLA' WHERE NUMVAGA IN(13,17,20); -- Essa questão está duplicada, mas repeti a resposta.
+
+
+-- 17) Mostre nome Morador (no select altere o titulo deste campo), apto e quantidade de moradores para o intervalo entre 3 e 7 moradores:
+SELECT NOME AS "MORADOR",NUMAPTO,QTDEMORADORES FROM CLIENTES WHERE QTDEMORADORES BETWEEN 3 AND 7;
+
+-- OU --
+SELECT NOME AS "MORADOR",NUMAPTO,QTDEMORADORES FROM CLIENTES WHERE QTDEMORADORES >= 3 AND QTDEMORADORES <= 7;
+
+
+-- 18) Alguns moradores dos apartamentos terão que pagar uma multa por atraso nos pagamentos dos condomínios,
+-- porém esse valor tem que ser atualizado para um aumento de 5% com um desconto de R$50. Atualize esses valores e mostre o comando
+-- select nome, apto, multa. Altere os títulos das colunas no select usando AS. Formate o campo de multa a ser exibida mostrando a mesma em R$.
+-- Não esqueça de fazer as alterações no alter section:
+ALTER SESSION SET NLS_CURRENCY = 'R$';
+
+UPDATE CLIENTES SET multa = (multa + multa * 0.05) - 50  WHERE multa IS NOT NULL;
+
+SELECT nome AS "Morador", numapto AS "Apto", TO_CHAR(multa, 'L999G999D00') AS "Multa (R$)" FROM CLIENTES;
+
+-- OU --
+
+UPDATE CLIENTES SET multa = (multa * 1.05) - 50 WHERE multa IS NOT NULL;
+
+-- NOTAS:
+
+-- L representa o Local Currency Symbol, no caso 'R$'
+
+-- Outra sugestão seria inserir ao inicio de forma chumbada no código o 'R$' dessa forma:
+
+SELECT nome AS "Morador", numapto AS "Apto", 'R$' || TO_CHAR(multa, '999G999D00') AS "Multa (R$)" FROM CLIENTES WHERE multa IS NOT NULL;
+
+-- Caso quisessemos remover os espaços em branco poderiamos utilizar o FM (Fill Mode).
+
+-- 19) Mostre a quantidade de moradores do edifício (pesquise na Apostila Pico páginas 124, 125...):
+SELECT SUM(qtdemoradores) AS "Quantidade Total de Moradores" FROM CLIENTES;
+
+
+-- 20) Conte quantos moradores são proprietários de apartamentos e quantos são alugados (pesquisar na apostila Pico pag 145, 146) group by:
+SELECT tipopropriedade, COUNT(*) AS "Quantidade" FROM CLIENTES GROUP BY tipopropriedade;
+
+
+-- 21) Liste, quantidade moradores, numero apto, num vaga. (pesquisar na apostila Pico pag 100 até 105):
+SELECT c.qtdemoradores AS "Quantidade de Moradores", c.numapto AS "Número do Apto", v.numvaga AS "Número da Vaga" FROM CLIENTES c JOIN VAGAS v ON c.numapto = v.numapto;
+
+
+-- 22) Liste, quantidade moradores, numero apto, num vaga, Obs para as vagas OBS Vago  (pesquisar na apostila Pico pag 100 até 105):
+SELECT c.qtdemoradores AS "Quantidade de Moradores", c.numapto AS "Número do Apto", v.numvaga AS "Número da Vaga", v.observacao AS "Observação" FROM CLIENTES c JOIN VAGAS v ON c.numapto = v.numapto WHERE v.observacao = 'VAGO';
+
+
+-- 23) Liste, quantidade moradores, numero apto, num vaga Obs para as vagas OBS Vago e vagas Tipo Simples (pesquisar na apostila Pico pag 100 até 105):
+SELECT c.qtdemoradores AS "Quantidade de Moradores", c.numapto AS "Número do Apto", v.numvaga AS "Número da Vaga", v.observacao AS "Observação", v.tipovaga AS "Tipo de Vaga" FROM CLIENTES c JOIN VAGAS v ON c.numapto = v.numapto WHERE v.observacao = 'VAGO' AND v.tipovaga = 'SIMPLES';
+
+
+-- 24) Liste, quantidade moradores, numero apto, num vaga Obs para as vagas OBS Ocupada (as que estão com null) e vagas Tipo Simples
+-- (pesquisar na apostila Pico pag 100 até 105)
+SELECT c.qtdemoradores AS "Quantidade de Moradores", c.numapto AS "Número do Apto", v.numvaga AS "Número da Vaga", v.observacao AS "Observação", v.tipovaga AS "Tipo de Vaga" FROM CLIENTES c JOIN VAGAS v ON c.numapto = v.numapto WHERE v.observacao IS NULL AND v.tipovaga = 'SIMPLES';
+
